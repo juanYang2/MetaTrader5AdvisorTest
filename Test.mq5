@@ -203,7 +203,20 @@ int OnInit()
    Print("Successfully initialized symbol info for ", _Symbol);
    Print("Symbol: ", symbol_info.Name());
    Print("Spread: ", symbol_info.Spread());
-
+     
+     
+            bool spreadfloat=SymbolInfoInteger(Symbol(),SYMBOL_SPREAD_FLOAT);
+         string comm=StringFormat("Spread %s = %I64d points\r\n",
+                                  spreadfloat?"floating":"fixed",
+                                  SymbolInfoInteger(Symbol(),SYMBOL_SPREAD));
+      //--- now let's calculate the spread by ourselves
+         double ask=SymbolInfoDouble(Symbol(),SYMBOL_ASK);
+         double bid=SymbolInfoDouble(Symbol(),SYMBOL_BID);
+         double spread=ask-bid;
+         int spread_points=(int)MathRound(spread/SymbolInfoDouble(Symbol(),SYMBOL_POINT));
+         comm=comm+"Calculated spread = "+(string)spread_points+" points";
+         Comment(comm);
+         
    return(INIT_SUCCEEDED);
   }
 
@@ -216,20 +229,6 @@ void onTick()
     if(barsTotal != bars){
         barsTotal = bars;
          
-         
-         
-//--- obtain spread from the symbol properties
-         bool spreadfloat=SymbolInfoInteger(Symbol(),SYMBOL_SPREAD_FLOAT);
-         string comm=StringFormat("Spread %s = %I64d points\r\n",
-                                  spreadfloat?"floating":"fixed",
-                                  SymbolInfoInteger(Symbol(),SYMBOL_SPREAD));
-      //--- now let's calculate the spread by ourselves
-         double ask=SymbolInfoDouble(Symbol(),SYMBOL_ASK);
-         double bid=SymbolInfoDouble(Symbol(),SYMBOL_BID);
-         double spread=ask-bid;
-         int spread_points=(int)MathRound(spread/SymbolInfoDouble(Symbol(),SYMBOL_POINT));
-         comm=comm+"Calculated spread = "+(string)spread_points+" points";
-         Comment(comm);
   }
 
 }
